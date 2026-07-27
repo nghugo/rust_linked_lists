@@ -7,6 +7,23 @@ struct Node<T> {
     next: Option<Box<Node<T>>>,
 }
 
+trait MyAsRef<T> {
+    fn as_ref2(&self) -> Option<&T>;
+}
+
+impl<T> MyAsRef<T> for Option<T> {
+    fn as_ref2(&self) -> Option<&T> {
+        match self {
+            None => None,
+            // Match ergonomics
+            // 1. Rust sees self is `&Option<T>`
+            // 2. Matching `Some(val)` auto-binds `val` as `&T` (borrowing)
+            // 3. RHS `Some(val)` creates a BRAND NEW Option holding `&T`
+            Some(val) => Some(val)
+        }
+    }
+}
+
 impl<T> List<T> {
     fn new() -> Self {
         List { head: None }
@@ -28,7 +45,7 @@ impl<T> List<T> {
     }
 
     fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| &node.val)
+        self.head.as_ref2().map(|node| &node.val)
     }
 
     fn peek_mut(&mut self) -> Option<&mut T> {
