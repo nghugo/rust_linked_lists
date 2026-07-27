@@ -3,21 +3,21 @@
 // implement: drop
 // make generic later
 
-pub struct List {
-    head: Option<Box<Node>>,
+pub struct List<T> {
+    head: Option<Box<Node<T>>>,
 }
 
-struct Node {
-    val: i32,
-    next: Option<Box<Node>>,
+struct Node<T> {
+    val: T,
+    next: Option<Box<Node<T>>>,
 }
 
-impl List {
+impl<T> List<T> {
     fn new() -> Self {
         List { head: None }
     }
 
-    fn push(&mut self, val: i32) {
+    fn push(&mut self, val: T) {
         let new_node = {
             Node {
                 val,
@@ -27,7 +27,7 @@ impl List {
         self.head = Some(Box::new(new_node));
     }
 
-    fn pop(&mut self) -> Option<i32> {
+    fn pop(&mut self) -> Option<T> {
         self.head.take().map (|node| {
             self.head = node.next;
             node.val}
@@ -35,7 +35,7 @@ impl List {
     }
 }
 
-impl Drop for List {
+impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut curr =self.head.take();
         while let Some(mut boxed_node) = curr {
@@ -50,7 +50,7 @@ mod test {
 
     #[test]
     fn basics() {
-        let mut list = List::new();
+        let mut list = List::<i32>::new();
 
         assert_eq!(list.pop(), None);
 
