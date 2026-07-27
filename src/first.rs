@@ -6,38 +6,33 @@
 use std::mem;
 
 pub struct List {
-    head: Link,
+    head: Option<Box<Node>>,
 }
 
 struct Node {
     val: i32,
-    next: Link,
-}
-
-enum Link {
-    Empty,
-    Elem(Box<Node>),
+    next: Option<Box<Node>>,
 }
 
 impl List {
     fn new() -> Self {
-        List { head: Link::Empty }
+        List { head: None }
     }
 
     fn push(&mut self, val: i32) {
         let new_node = {
             Node {
                 val,
-                next: mem::replace(&mut self.head, Link::Empty)
+                next: mem::replace(&mut self.head, None),
             }
         };
-        self.head = Link::Elem(Box::new(new_node));
+        self.head = Some(Box::new(new_node));
     }
 
     fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, Link::Empty) {
-            Link::Empty => None,
-            Link::Elem(node) => {
+        match mem::replace(&mut self.head, None) {
+            None => None,
+            Some(node) => {
                 self.head = node.next;
                 Some(node.val)
             }
@@ -45,6 +40,7 @@ impl List {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::List;
 
