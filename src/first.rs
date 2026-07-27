@@ -3,8 +3,6 @@
 // implement: drop
 // make generic later
 
-use std::mem;
-
 pub struct List {
     head: Option<Box<Node>>,
 }
@@ -23,19 +21,25 @@ impl List {
         let new_node = {
             Node {
                 val,
-                next: mem::replace(&mut self.head, None),
+                next: self.head.take(),
             }
         };
         self.head = Some(Box::new(new_node));
     }
 
     fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, None) {
-            None => None,
-            Some(node) => {
-                self.head = node.next;
-                Some(node.val)
-            }
+        self.head.take().map (|node| {
+            self.head = node.next;
+            node.val}
+        )
+    }
+}
+
+impl Drop for List {
+    fn drop(&mut self) {
+        let mut curr =self.head.take();
+        while let Some(mut boxed_node) = curr {
+            curr = boxed_node.next.take();
         }
     }
 }
