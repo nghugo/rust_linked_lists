@@ -28,16 +28,24 @@ impl<T> List<T> {
     }
 
     fn pop(&mut self) -> Option<T> {
-        self.head.take().map (|node| {
+        self.head.take().map(|node| {
             self.head = node.next;
-            node.val}
-        )
+            node.val
+        })
+    }
+
+    fn peek(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| &node.val)
+    }
+
+    fn peek_mut(&mut self) -> Option<&mut T> {
+        self.head.as_mut().map(|node| &mut node.val)
     }
 }
 
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        let mut curr =self.head.take();
+        let mut curr = self.head.take();
         while let Some(mut boxed_node) = curr {
             curr = boxed_node.next.take();
         }
@@ -52,15 +60,24 @@ mod test {
     fn basics() {
         let mut list = List::<i32>::new();
 
+        assert_eq!(list.peek(), None);
         assert_eq!(list.pop(), None);
 
         list.push(1);
+        assert_eq!(list.peek(), Some(&1));
+
+        let  peeked = list.peek_mut();
+        peeked.map(|val| {
+            *val = 9;
+        });
+        assert_eq!(list.peek(), Some(&9));
+
         list.push(2);
         list.push(3);
 
         assert_eq!(list.pop(), Some(3));
         assert_eq!(list.pop(), Some(2));
-        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), Some(9));
         assert_eq!(list.pop(), None);
     }
 }
