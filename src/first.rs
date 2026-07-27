@@ -13,11 +13,9 @@ impl<T> List<T> {
     }
 
     fn push(&mut self, val: T) {
-        let new_node = {
-            Node {
-                val,
-                next: self.head.take(),
-            }
+        let new_node = Node {
+            val,
+            next: self.head.take(),
         };
         self.head = Some(Box::new(new_node));
     }
@@ -61,7 +59,7 @@ mod test {
         list.push(1);
         assert_eq!(list.peek(), Some(&1));
 
-        let  peeked = list.peek_mut();
+        let peeked = list.peek_mut();
         peeked.map(|val| {
             *val = 9;
         });
@@ -76,3 +74,17 @@ mod test {
         assert_eq!(list.pop(), None);
     }
 }
+
+// STACK                                HEAP
+// ┌──────────────┐                     ┌──────────────────────────┐
+// │ List {       │                     │ Node 1 {                 │
+// │   head: Some │ ──► Box (Pointer) ──┼─► val: 9,                │
+// │ }            │                     │   next: Some ────────────┼──┐
+// └──────────────┘                     └──────────────────────────┘  │
+//                                                                    │
+//                                      ┌──────────────────────────┐  │
+//                                      │ Node 2 {                 │  │
+//                                      │   val: 2,                │◄─┘
+//                                      │   next: None             │
+//                                      │ }                        │
+//                                      └──────────────────────────┘
