@@ -1,8 +1,3 @@
-// linked list has val, next
-// add methods: push, pop
-// implement: drop
-// make generic later
-
 pub struct List<T> {
     head: Option<Box<Node<T>>>,
 }
@@ -81,5 +76,3 @@ mod test {
         assert_eq!(list.pop(), None);
     }
 }
-
-// create node class which holds the val and next
