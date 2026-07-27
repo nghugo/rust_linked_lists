@@ -7,6 +7,7 @@ struct Node<T> {
     next: Option<Box<Node<T>>>,
 }
 
+// --- START just for fun
 trait MyAsRef<T> {
     fn as_ref2(&self) -> Option<&T>;
 }
@@ -23,6 +24,7 @@ impl<T> MyAsRef<T> for Option<T> {
         }
     }
 }
+// --- END fun
 
 impl<T> List<T> {
     fn new() -> Self {
