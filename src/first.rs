@@ -40,10 +40,16 @@ impl<T> List<T> {
     }
 
     fn pop(&mut self) -> Option<T> {
+        // Previous functional style
+        /*
         self.head.take().map(|node| {
             self.head = node.next;
             node.val
         })
+         */
+        let node = self.head.take()?;
+        self.head = node.next;
+        Some(node.val)
     }
 
     fn peek(&self) -> Option<&T> {
@@ -85,7 +91,9 @@ pub struct Iter<'a, T> {
 
 impl<T> List<T> {
     pub fn iter(&self) -> Iter<'_, T> {
-        Iter { next: self.head.as_ref().map(|node| &**node) }
+        Iter {
+            next: self.head.as_ref().map(|node| &**node),
+        }
     }
 }
 
@@ -93,13 +101,18 @@ impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
+        // Previous functional style
+        /*
         self.next.map(|node| {
             self.next = node.next.as_ref().map(|next_node| &**next_node);
             &node.val
         })
+         */
+        let node = self.next?;
+        self.next = node.next.as_deref();
+        Some(&node.val)
     }
 }
-
 
 #[cfg(test)]
 mod test {
